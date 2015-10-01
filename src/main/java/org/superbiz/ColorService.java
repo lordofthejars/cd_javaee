@@ -50,11 +50,4 @@ public class ColorService {
     public void setColor(@PathParam("color") String color) {
         this.color = color;
     }
-
-    @Path("object")
-    @GET
-    @Produces({APPLICATION_JSON})
-    public Color getColorObject() {
-        return new Color("orange", 0xE7, 0x71, 0x00);
-    }
 }
