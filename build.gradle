@@ -11,10 +11,32 @@ targetCompatibility = 1.7
 
 
 repositories {
-	mavenCentral()        
+    mavenCentral()
+    maven {
+        url "http://repository.jboss.org/nexus/content/groups/public"
+    }
+}
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath "io.spring.gradle:dependency-management-plugin:0.5.3.RELEASE"
+    }
+}
+
+apply plugin: "io.spring.dependency-management"
+
+
+dependencyManagement {
+    imports {
+        mavenBom 'org.arquillian:arquillian-universe:1.0.0.Alpha1'
+    }
 }
 
 dependencies {
+    testCompile group: 'org.arquillian.universe', name: 'arquillian-junit', ext: 'pom'
     testCompile group: 'org.apache.openejb', name: 'arquillian-tomee-embedded', version:'1.7.2'
     testCompile group: 'org.apache.openejb', name: 'tomee-jaxrs', version:'1.7.2'
     testCompile group: 'junit', name: 'junit', version:'4.12'

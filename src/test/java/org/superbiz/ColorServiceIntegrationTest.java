@@ -3,6 +3,7 @@ package org.superbiz;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.hamcrest.core.Is;
 import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -33,7 +34,7 @@ public class ColorServiceIntegrationTest {
     private URL webappUrl;
 
 
-    @Test
+    @Test @RunAsClient
     public void postAndGet() throws Exception {
 
         // POST
