@@ -1,10 +1,9 @@
 apply plugin: 'war'
 apply plugin: 'pmd'
+apply plugin: 'jacoco'
 
 group = 'org.superbiz'
 version = '1.0-SNAPSHOT'
-
-description = "TomEE JAXRS starter project"
 
 sourceCompatibility = 1.7
 targetCompatibility = 1.7
@@ -12,9 +11,6 @@ targetCompatibility = 1.7
 
 repositories {
     mavenCentral()
-    maven {
-        url "http://repository.jboss.org/nexus/content/groups/public"
-    }
 }
 
 buildscript {
@@ -23,10 +19,12 @@ buildscript {
     }
     dependencies {
         classpath "io.spring.gradle:dependency-management-plugin:0.5.3.RELEASE"
+        classpath 'org.unbroken-dome.gradle-plugins:gradle-testsets-plugin:1.2.0'
     }
 }
 
 apply plugin: "io.spring.dependency-management"
+apply plugin: 'org.unbroken-dome.test-sets'
 
 
 dependencyManagement {
@@ -43,9 +41,43 @@ dependencies {
     providedCompile group: 'org.apache.openejb', name: 'javaee-api', version:'6.0-6'
 }
 
+// ** Integration/Slow tests
+
+testSets {
+    integrationTests
+}
+
+
+// ** PMD Configuration **
+
 pmd {
     ignoreFailures = true
     ruleSets = [
             "basic"
     ]
+}
+
+// ** JaCoCo configuration **
+
+jacocoTestReport {
+    reports {
+        xml.enabled false
+        csv.enabled false
+    }
+}
+
+check.dependsOn integrationTests
+integrationTests.mustRunAfter test
+
+// Generating reports for integration tests
+task jacocoRootTestReport(type: JacocoReport) {
+    sourceSets sourceSets.main
+    executionData files([
+            "$buildDir/jacoco/test.exec",
+            "$buildDir/jacoco/integrationTests.exec"
+    ])
+    reports {
+        xml.enabled false
+        csv.enabled false
+    }    
 }

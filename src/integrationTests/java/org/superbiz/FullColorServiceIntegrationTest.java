@@ -1,30 +1,28 @@
 package org.superbiz;
 
 import org.apache.cxf.jaxrs.client.WebClient;
-import org.hamcrest.core.Is;
+import org.hamcrest.CoreMatchers;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
-import static org.junit.Assert.assertThat;
 import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertThat;
 
 // tag::init[]
 @RunWith(Arquillian.class)
-public class ColorServiceIntegrationTest {
+public class FullColorServiceIntegrationTest {
 
     @Deployment
     public static WebArchive createDeployment() {
@@ -35,27 +33,20 @@ public class ColorServiceIntegrationTest {
     private URL webappUrl;
 
 
-    @Test @RunAsClient
-    public void postAndGet() throws Exception {
-
-        // POST
-        {
-            final WebClient webClient = WebClient.create(webappUrl.toURI());
-            final Response response = webClient.path("color/green").post(null);
-
-            assertThat(response.getStatus(), is(204));
-        }
+    @Test
+    @RunAsClient
+    public void getRandom() throws Exception {
 
         // GET
         {
             final WebClient webClient = WebClient.create(webappUrl.toURI());
-            final Response response = webClient.path("color").get();
+            final Response response = webClient.path("color/random").get();
 
             assertThat(response.getStatus(), is(200));
 
             final String content = slurp((InputStream) response.getEntity());
 
-            assertThat(content, is("green"));
+            assertThat(content, CoreMatchers.anyOf(is("red"), is("blue")));
         }
 
     }
@@ -70,6 +61,5 @@ public class ColorServiceIntegrationTest {
         out.flush();
         return new String(out.toByteArray());
     }
-
 }
 // end::init[]

@@ -24,14 +24,21 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
+import java.security.SecureRandom;
+import java.util.List;
+
 import static javax.ejb.LockType.READ;
 import static javax.ejb.LockType.WRITE;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
+
+// tag::init[]
 @Lock(READ)
 @Singleton
 @Path("/color")
 public class ColorService {
+
+    private static final String[] DEFAULT_COLORS = {"red", "blue"};
 
     private String color;
 
@@ -50,4 +57,13 @@ public class ColorService {
     public void setColor(@PathParam("color") String color) {
         this.color = color;
     }
+
+    @GET
+    @Path("/random")
+    public String randomColor() {
+        // expensive operation
+        SecureRandom secureRandom = new SecureRandom();
+        return DEFAULT_COLORS[secureRandom.nextInt(2)];
+    }
 }
+// end::init[]

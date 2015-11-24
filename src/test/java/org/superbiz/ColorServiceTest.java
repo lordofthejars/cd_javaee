@@ -5,6 +5,7 @@ import static org.junit.Assert.assertThat;
 import org.hamcrest.core.Is;
 import org.junit.Test;
 
+// tag::init[]
 public class ColorServiceTest {
 
     @Test
@@ -16,3 +17,4 @@ public class ColorServiceTest {
     }
 
 }
+// end::init[]
