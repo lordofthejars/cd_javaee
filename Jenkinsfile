@@ -7,7 +7,7 @@ node {
         gradle('clean test')
     } finally {
         stash excludes: 'build/', includes: '**', name: 'source'
-        stash includes: 'build/jacoco/*.exec', name: 'codeCoverage'
+        stash includes: 'build/jacoco/*.exec', name: 'unitCodeCoverage'
         step([$class: 'JUnitResultArchiver', testResults: '**/build/test-results/*.xml'])
     }
 }
@@ -15,7 +15,13 @@ node {
 stage 'integrationTests'
 
 node {
-    echo 'Integration Tests'
+    unstash 'source'
+    try {
+        gradle('integrationTests')
+    } finally {
+        stash includes: 'build/jacoco/*.exec', name: 'integrationCodeCoverage'
+        step([$class: 'JUnitResultArchiver', testResults: '**/build/integrationTests-results/*.xml'])
+    }
 }
 
 void gradle(String tasks, String switches = null) {
