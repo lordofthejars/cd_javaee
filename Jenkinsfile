@@ -24,6 +24,7 @@ stage 'code-quality'
 node {
     unstash 'source'
     gradle 'pmdMain'
+    step([$class: 'PmdPublisher', pattern: 'build/reports/pmd/*.xml'])
 
     unstash 'unitCodeCoverage'
     unstash 'integrationCodeCoverage'
