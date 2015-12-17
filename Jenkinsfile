@@ -19,7 +19,7 @@ node {
     step([$class: 'JUnitResultArchiver', testResults: '**/build/integrationTests-results/*.xml'])
 }
 
-stage 'code-quality'
+stage 'code-analysis'
 
 node {
     unstash 'source'
@@ -29,6 +29,13 @@ node {
     unstash 'unitCodeCoverage'
     unstash 'integrationCodeCoverage'
     gradle 'jacocoRootTestReport'
+}
+
+stage 'assemble-binaries'
+
+node {
+    unstash 'source'
+    gradle 'assemble'
 }
 
 void gradle(String tasks, String switches = null) {
