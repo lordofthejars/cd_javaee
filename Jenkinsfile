@@ -41,8 +41,11 @@ node {
 
 
 stage 'publish-binaries'
+
+node {
     unstash 'source'
     gradle 'publish'
+}
 
 void gradle(String tasks, String switches = null) {
     String gradleCommand = "";
