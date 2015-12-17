@@ -29,6 +29,7 @@ node {
     unstash 'unitCodeCoverage'
     unstash 'integrationCodeCoverage'
     gradle 'jacocoRootTestReport'
+    publishHTML(target: [reportDir:'build/reports/jacoco/jacocoRootTestReport/html', reportFiles: 'index.html', reportName: 'Code Coverage'])
 }
 
 stage 'assemble-binaries'
@@ -37,6 +38,11 @@ node {
     unstash 'source'
     gradle 'assemble'
 }
+
+
+stage 'publish-binaries'
+    unstash 'source'
+    gradle 'publish'
 
 void gradle(String tasks, String switches = null) {
     String gradleCommand = "";

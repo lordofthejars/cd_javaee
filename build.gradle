@@ -1,6 +1,7 @@
 apply plugin: 'war'
 apply plugin: 'pmd'
 apply plugin: 'jacoco'
+apply plugin: 'maven-publish'
 
 group = 'org.superbiz'
 version = '1.0-SNAPSHOT'
@@ -104,5 +105,37 @@ war {
     from(buildDir) {
         include 'build-info.properties'
         into('WEB-INF/classes')
+    }
+}
+
+// Publish Binary
+
+task sourceJar(type: Jar) {
+    from sourceSets.main.allJava
+}
+
+task javadocJar (type: Jar, dependsOn: javadoc) {
+    from javadoc.destinationDir
+}
+
+publishing {
+    publications {
+        webApp(MavenPublication){
+            from components.web
+            artifact sourceJar {
+                classifier "sources"
+            }
+            artifact javadocJar {
+                classifier "javadoc"
+            }
+        }
+    }
+
+    // Local directory is used for simplification
+
+    repositories {
+        maven {
+            url "file:/${project.projectDir}/artifacts"
+        }
     }
 }
