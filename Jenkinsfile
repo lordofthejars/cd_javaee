@@ -24,12 +24,13 @@ stage 'code-analysis'
 node {
     unstash 'source'
     gradle 'pmdMain'
-    step([$class: 'PmdPublisher', pattern: 'build/reports/pmd/*.xml'])
+    //step([$class: 'PmdPublisher', pattern: 'build/reports/pmd/*.xml'])
 
     unstash 'unitCodeCoverage'
     unstash 'integrationCodeCoverage'
     gradle 'jacocoRootTestReport'
-    publishHTML(target: [reportDir:'build/reports/jacoco/jacocoRootTestReport/html', reportFiles: 'index.html', reportName: 'Code Coverage'])
+    //publishHTML(target: [reportDir:'build/reports/jacoco/jacocoRootTestReport/html', reportFiles: 'index.html', reportName: 'Code Coverage'])
+    step([$class: 'JacocoPublisher', execPattern:'build/jacoco/*.exec', classPattern: 'build/classes/main', sourcePattern: 'src/main/java'])
 }
 
 stage 'assemble-binaries'
@@ -52,7 +53,7 @@ void gradle(String tasks, String switches = null) {
     gradleCommand += './gradlew '
     gradleCommand += tasks
 
-    if(switches) {
+    if(switches != null) {
         gradleCommand += ' '
         gradleCommand += switches
     }

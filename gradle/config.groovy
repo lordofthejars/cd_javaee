@@ -1,5 +1,6 @@
 binaryRepository {
-    url = 'file:/${project.projectDir}/artifacts'
+    url = "file:."
+    name = 'artifacts'
 }
 environments {
     test {

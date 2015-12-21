@@ -60,6 +60,10 @@ pmd {
 
 // ** JaCoCo configuration **
 
+jacoco {
+    toolVersion = "0.7.5.201505241946"
+}
+
 jacocoTestReport {
     reports {
         xml.enabled false
@@ -70,9 +74,12 @@ jacocoTestReport {
 check.dependsOn integrationTests
 integrationTests.mustRunAfter test
 
+apply from: "$rootDir/gradle/configuring.gradle"
+
 // Apply Versioning
 allprojects {
     apply from: "$rootDir/gradle/versioning.gradle"
+    ext.config = rootProject.ext.parsedConfig
 }
 
 
@@ -84,7 +91,7 @@ task jacocoRootTestReport(type: JacocoReport) {
             "$buildDir/jacoco/integrationTests.exec"
     ])
     reports {
-        xml.enabled false
+        xml.enabled true
         csv.enabled false
     }    
 }
@@ -118,6 +125,8 @@ task javadocJar (type: Jar, dependsOn: javadoc) {
     from javadoc.destinationDir
 }
 
+ext.repoUrl = "$config.binaryRepository.url/$config.binaryRepository.name"
+
 publishing {
     publications {
         webApp(MavenPublication){
@@ -135,7 +144,10 @@ publishing {
 
     repositories {
         maven {
-            url "file:/${project.projectDir}/artifacts"
+            url repoUrl
         }
     }
 }
+
+// Deploy to environment
+
